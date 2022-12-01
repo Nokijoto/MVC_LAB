@@ -18,9 +18,18 @@ namespace MVC_LAB.Controllers
         {
             var model = new PersonViewModel()
             {
-                Persons =_personService.GetPersons()
+                Persons = _personService.GetPersons()
             };
             return View(model);
+        }
+        public IActionResult NewPerson()
+        {
+            return View();
+        }
+        public IActionResult CreateNewPerson(int id, string name, string city, GenderEnum gender)
+        {
+            _personService.CreatePerson(id, name, city, gender);
+            return RedirectToAction("Index");
         }
     }
 }
