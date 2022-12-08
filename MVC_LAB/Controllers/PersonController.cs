@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using MVC_LAB.Models.Person;
 using MVC_LAB.Services;
+using System.CodeDom;
 
 namespace MVC_LAB.Controllers
 {
@@ -24,11 +27,43 @@ namespace MVC_LAB.Controllers
         }
         public IActionResult NewPerson()
         {
-            return View();
-        }
-        public IActionResult CreateNewPerson(int id, string name, string city, GenderEnum gender)
+            var model = new CreatePersonViewModel()
+            {
+                Gender = new List<SelectListItem>()
+            };
+        foreach( GenderEnum gender in (GenderEnum[])Enum.GetValues(typeof(GenderEnum)))
         {
-            _personService.CreatePerson(id, name, city, gender);
+                model.Gender.Add(new SelectListItem() { Text = gender.ToString(), Value = ((int)gender).ToString() });
+        }
+            return View(model);
+        }
+        public IActionResult CreateNewPerson(string name, string city, GenderEnum gender)
+        {
+            _personService.CreatePerson(name, city, gender);
+            return RedirectToAction("Index");
+        }
+        public IActionResult EditPerson(int id)
+        {
+            var person = _personService.GetPerson(id);
+            var model = new EditPersonViewModel()
+            {
+                Gender = new List<SelectListItem>()
+            };
+
+            foreach (GenderEnum gender in (GenderEnum[])Enum.GetValues(typeof(GenderEnum)))
+            {
+                model.Gender.Add(new SelectListItem() { Text = gender.ToString(), Value = ((int)gender).ToString(), Selected = person.Gender == gender });
+                model.ID = person.ID;
+                model.Name = person.Name;
+                model.City = person.City;
+            }
+
+
+            return View(model);
+        }
+        public IActionResult EditPersonDetails(long id, string name, string city, GenderEnum gender)
+        {
+            _personService.EditPerson(id, name, city, gender);
             return RedirectToAction("Index");
         }
     }

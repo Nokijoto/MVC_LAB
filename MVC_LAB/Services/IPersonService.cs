@@ -5,6 +5,8 @@ namespace MVC_LAB.Services
     public interface IPersonService
     {
         public List<PersonModel> GetPersons();
-        public void CreatePerson(int id, string name, string city, GenderEnum gender);
+        public PersonModel GetPerson(int id);
+        public void CreatePerson( string name, string city, GenderEnum gender);
+        public void EditPerson(long id, string name, string city, GenderEnum gender);
     }
 }
